@@ -1,4 +1,4 @@
-#Smart Order Router – Cont & Kukanov Model
+**Smart Order Router – Cont & Kukanov Model**
 
 This project is a simulation of a Smart Order Router (SOR) designed to split a large buy order—specifically 5,000 shares—across several trading venues in a cost-effective way. The routing logic is based on a simplified version of the static cost model introduced in the paper:
 
@@ -42,7 +42,7 @@ Basis-point savings vs. each baseline
 
 A cumulative cost plot is also saved as results.png, showing how cost accumulates over time during execution.
 
-#Future Improvement Idea
+**Future Improvement Idea**
 
 Right now, the model assumes that all displayed shares in the order book can be filled, which isn’t always true in real trading. A useful improvement would be to simulate fill uncertainty based on queue position. For example, orders placed deeper in the book might have lower fill probabilities, which could be estimated using cancellation rates or modeled as a Poisson process. This would make the backtest more realistic by accounting for execution risk.
 
