@@ -4,15 +4,11 @@ import json
 import matplotlib.pyplot as plt
 from itertools import product
 from datetime import datetime, timedelta
-
-# === Load and preprocess data ===
 df = pd.read_csv("l1_day.csv")
 df = df[['ts_event', 'publisher_id', 'ask_px_00', 'ask_sz_00']]
 df_sorted = df.sort_values(by='ts_event')
 df_unique = df_sorted.drop_duplicates(subset=['ts_event', 'publisher_id'], keep='first')
 snapshots = list(df_unique.groupby('ts_event'))[::5]  # Downsample every 5th snapshot
-
-# === Venue class ===
 class Venue:
     def __init__(self, ask, ask_size, fee=0.0, rebate=0.0):
         self.ask = ask
@@ -20,7 +16,7 @@ class Venue:
         self.fee = fee
         self.rebate = rebate
 
-# === Allocator from pseudocode ===
+#  pseudocode 
 def allocate(order_size, venues, λo, λu, θ):
     step = 100
     splits = [[]]
@@ -57,7 +53,7 @@ def compute_cost(split, venues, order_size, λo, λu, θ):
     overfill = max(executed - order_size, 0)
     return cash_spent + λu * underfill + λo * overfill + θ * (underfill + overfill)
 
-# === Backtest Engine ===
+# Backtest Engine 
 def run_backtest(snapshots, order_size, λo, λu, θ, track=False):
     remaining = order_size
     spent = 0.0
@@ -81,7 +77,7 @@ def run_backtest(snapshots, order_size, λo, λu, θ, track=False):
                 break
     return spent, spent / order_size, cumulative
 
-# === Baseline Strategies ===
+#  Baseline Strategies 
 def baseline_best_ask(snapshots, order_size):
     remaining, spent = order_size, 0.0
     for ts, snapshot in snapshots:
@@ -129,7 +125,7 @@ def baseline_vwap(snapshots, order_size):
             if remaining <= 0: break
     return spent, spent / order_size
 
-# === Grid Search + Evaluation ===
+# Grid Search + Evaluation 
 ORDER_SIZE = 1000
 param_grid = list(product([0.1, 1, 10], repeat=2))
 best = (None, float('inf'), 0)
@@ -156,11 +152,11 @@ summary = {
     "savings_vs_vwap_bps": 10000 * (b3 - spent) / b3 if b3 > 0 else None
 }
 
-# === Save JSON output ===
+# output 
 with open("results.json", "w") as f:
     json.dump(summary, f, indent=2)
 
-# === Save cost chart ===
+# Save cost chart 
 plt.figure(figsize=(8, 4))
 plt.plot(cumulative, label="Cumulative Spend")
 plt.xlabel("Snapshots")
